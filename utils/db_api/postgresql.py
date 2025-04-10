@@ -57,33 +57,6 @@ class Database:
         ])
         return sql, tuple(parameters.values())
 
-    async def add_user(self, full_name, username, telegram_id):
-        sql = "INSERT INTO users (full_name, username, telegram_id) VALUES($1, $2, $3) returning *"
-        return await self.execute(sql, full_name, username, telegram_id, fetchrow=True)
-
-    async def select_all_users(self):
-        sql = "SELECT * FROM Users"
-        return await self.execute(sql, fetch=True)
-
-    async def select_user(self, **kwargs):
-        sql = "SELECT * FROM Users WHERE "
-        sql, parameters = self.format_args(sql, parameters=kwargs)
-        return await self.execute(sql, *parameters, fetchrow=True)
-
-    async def count_users(self):
-        sql = "SELECT COUNT(*) FROM Users"
-        return await self.execute(sql, fetchval=True)
-
-    async def update_user_username(self, username, telegram_id):
-        sql = "UPDATE Users SET username=$1 WHERE telegram_id=$2"
-        return await self.execute(sql, username, telegram_id, execute=True)
-
-    async def delete_users(self):
-        await self.execute("DELETE FROM Users WHERE TRUE", execute=True)
-
-    async def drop_users(self):
-        await self.execute("DROP TABLE Users", execute=True)
-
 
     async def get_info(self, user_id):
         sql = f"SELECT * FROM sender_info WHERE user_id = '{user_id}'"
@@ -91,5 +64,5 @@ class Database:
 
 
     async def update_count(self, chat_id, count):
-        sql = f"UPDATE send_info SET counts='{count}' WHERE user_id='{chat_id}'"
+        sql = f"UPDATE sender_info SET counts='{count}' WHERE user_id='{chat_id}'"
         return await self.execute(sql, fetch=True)
